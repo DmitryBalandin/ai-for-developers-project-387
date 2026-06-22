@@ -1,0 +1,15 @@
+.git
+.gitignore
+node_modules
+.opencode
+.github
+*.md
+opencode.json
+AGENTS.md
+Makefile
+backend/node_modules
+frontend/node_modules
+frontend/e2e
+frontend/test-results
+frontend/playwright.config.ts
+backend/src/__tests__

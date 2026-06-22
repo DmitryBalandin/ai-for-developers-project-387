@@ -1,0 +1,11 @@
+{
+  "name": "call-calendar-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "@typespec/compiler": "latest",
+    "@typespec/http": "latest",
+    "@typespec/rest": "latest",
+    "@typespec/openapi3": "latest"
+  },
+  "private": true
+}

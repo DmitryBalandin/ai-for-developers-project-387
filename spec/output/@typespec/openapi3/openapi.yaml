@@ -1,0 +1,346 @@
+openapi: 3.0.0
+info:
+  title: Calendar of Calls API
+  version: 0.0.0
+tags: []
+paths:
+  /api/bookings:
+    get:
+      operationId: BookingsOwner_listUpcomingBookings
+      description: List all upcoming bookings across all event types. Owner-only.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+    post:
+      operationId: BookingsGuest_createBooking
+      description: 'Create a new booking. The server validates: (1) slot is not already booked, (2) startTime falls within the 14-day window, (3) endTime = startTime + eventType.durationMinutes. Returns 409 if slot is occupied.'
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/ValidationError'
+                  - $ref: '#/components/schemas/ConflictError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingCreate'
+  /api/event-types:
+    post:
+      operationId: EventTypesOwner_createEventType
+      description: Create a new event type. Duration is specified in minutes.
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventType'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventTypeCreate'
+    get:
+      operationId: EventTypesOwner_listEventTypes
+      description: List all event types with full details.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventType'
+  /api/event-types/{id}:
+    get:
+      operationId: EventTypesOwner_getEventType
+      description: Get a single event type by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventType'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+    put:
+      operationId: EventTypesOwner_updateEventType
+      description: Update an existing event type. All fields are optional.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventType'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventTypeUpdate'
+    delete:
+      operationId: EventTypesOwner_deleteEventType
+      description: Delete an event type by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+  /api/public/event-types:
+    get:
+      operationId: EventTypesGuest_listPublicEventTypes
+      description: List available event types (public). Returns title, description, and duration.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventType'
+  /api/public/event-types/{eventTypeId}/slots:
+    get:
+      operationId: EventTypesGuest_getAvailableSlots
+      description: Get available time slots for a given event type. The date range must not exceed 14 days. Server checks that slots do not overlap with existing bookings.
+      parameters:
+        - name: eventTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          explode: false
+        - name: dateTo
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailableSlot'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/NotFoundError'
+                  - $ref: '#/components/schemas/ValidationError'
+components:
+  schemas:
+    AvailableSlot:
+      type: object
+      required:
+        - startTime
+        - endTime
+      properties:
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+    Booking:
+      type: object
+      required:
+        - id
+        - eventTypeId
+        - guestName
+        - startTime
+        - endTime
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+        eventTypeId:
+          type: string
+        guestName:
+          type: string
+        guestEmail:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/BookingStatus'
+        createdAt:
+          type: string
+          format: date-time
+    BookingCreate:
+      type: object
+      required:
+        - eventTypeId
+        - guestName
+        - startTime
+      properties:
+        eventTypeId:
+          type: string
+        guestName:
+          type: string
+        guestEmail:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+    BookingStatus:
+      type: string
+      enum:
+        - confirmed
+        - cancelled
+    ConflictError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: number
+          enum:
+            - 409
+        message:
+          type: string
+    EventType:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - durationMinutes
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        durationMinutes:
+          type: integer
+          format: int32
+    EventTypeCreate:
+      type: object
+      required:
+        - title
+        - description
+        - durationMinutes
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        durationMinutes:
+          type: integer
+          format: int32
+    EventTypeUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        durationMinutes:
+          type: integer
+          format: int32
+    NotFoundError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: number
+          enum:
+            - 404
+        message:
+          type: string
+    ValidationError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: number
+          enum:
+            - 400
+        message:
+          type: string
+servers:
+  - url: http://localhost:3000
+    description: Development server
+    variables: {}

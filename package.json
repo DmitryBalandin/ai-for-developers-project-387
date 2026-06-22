@@ -1,0 +1,28 @@
+{
+  "name": "ai-for-developers-project-387",
+  "version": "1.0.0",
+  "description": "[![Actions Status](https://github.com/DmitryBalandin/ai-for-developers-project-387/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DmitryBalandin/ai-for-developers-project-387/actions)",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "lint": "biome check",
+    "format": "biome check --write",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DmitryBalandin/ai-for-developers-project-387.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DmitryBalandin/ai-for-developers-project-387/issues"
+  },
+  "homepage": "https://github.com/DmitryBalandin/ai-for-developers-project-387#readme",
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
+    "@opencode-ai/plugin": "^1.15.12"
+  }
+}

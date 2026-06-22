@@ -1,0 +1,36 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "mcp": {
+    "github": {
+      "type": "local",
+      "command": ["/home/user/.local/bin/gh", "mcp"],
+      "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["/bin/bash", "-c", "W_IP=$(ip route show default | awk '{print $3}'); exec npx -y chrome-devtools-mcp@latest -u http://${W_IP}:9223"],
+      "enabled": false
+    },
+    "chrome-devtools-wsl": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest", "-u", "http://127.0.0.1:9224"],
+      "enabled": false
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["/bin/bash", "-c", "if ! curl -sf http://127.0.0.1:9224/json/version > /dev/null 2>&1; then nohup /snap/bin/chromium --remote-debugging-port=9224 --remote-debugging-address=0.0.0.0 --user-data-dir=/tmp/chromium-wsl-profile --no-first-run --no-default-browser-check --disable-features=TFLiteLanguageDetectionEnabled about:blank > /tmp/chromium-wsl.log 2>&1 & for i in $(seq 1 10); do curl -sf http://127.0.0.1:9224/json/version > /dev/null && break; sleep 1; done; fi; exec npx -y @playwright/mcp@latest --cdp-endpoint http://127.0.0.1:9224"],
+      "enabled": true
+    },
+    "shadcn": {
+      "type": "local",
+      "command": ["npx", "shadcn@latest", "mcp"],
+      "enabled": true
+    },
+    "render": {
+      "type": "local",
+      "command": ["bash", "-c", "set -a && . /home/user/hexlet/ai-for-developers-project-387/.env && set +a && exec docker run -i --rm -e RENDER_API_KEY ghcr.io/render-oss/render-mcp-server"],
+      "enabled": true
+    }
+  }
+}
