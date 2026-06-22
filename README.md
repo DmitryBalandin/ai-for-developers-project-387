@@ -1,2 +1,3 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/DmitryBalandin/ai-for-developers-project-387/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DmitryBalandin/ai-for-developers-project-387/actions)
+[![CI](https://github.com/DmitryBalandin/ai-for-developers-project-387/actions/workflows/ci.yml/badge.svg)](https://github.com/DmitryBalandin/ai-for-developers-project-387/actions)
