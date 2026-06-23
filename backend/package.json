@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "start": "node --loader tsx src/server.ts",
+    "start": "node --import tsx src/server.ts",
     "lint": "biome check src/",
     "format": "biome check --write src/",
     "test": "vitest run",
