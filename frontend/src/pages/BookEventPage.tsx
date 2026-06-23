@@ -14,6 +14,8 @@ import { Label } from 'src/components/ui/label';
 import { Separator } from 'src/components/ui/separator';
 import type { AvailableSlot, EventType } from 'src/types';
 
+const toUTCStartOfDay = (d: Date) => format(d, 'yyyy-MM-dd') + 'T00:00:00.000Z';
+
 export function BookEventPage() {
   const { eventTypeId } = useParams<{ eventTypeId: string }>();
   const navigate = useNavigate();
@@ -43,8 +45,8 @@ export function BookEventPage() {
 
   useEffect(() => {
     if (!eventTypeId || !selectedDate) return;
-    const dateFrom = format(selectedDate, 'yyyy-MM-dd') + 'T00:00:00.000Z';
-    const dateTo = format(addDays(selectedDate, 1), 'yyyy-MM-dd') + 'T00:00:00.000Z';
+    const dateFrom = toUTCStartOfDay(startOfDay(selectedDate));
+    const dateTo = toUTCStartOfDay(addDays(selectedDate, 1));
     getAvailableSlots(eventTypeId, dateFrom, dateTo)
       .then((newSlots) => {
         setSlots(newSlots);
