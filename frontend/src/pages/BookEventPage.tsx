@@ -43,8 +43,8 @@ export function BookEventPage() {
 
   useEffect(() => {
     if (!eventTypeId || !selectedDate) return;
-    const dateFrom = selectedDate.toISOString();
-    const dateTo = addDays(selectedDate, 1).toISOString();
+    const dateFrom = format(selectedDate, 'yyyy-MM-dd') + 'T00:00:00.000Z';
+    const dateTo = format(addDays(selectedDate, 1), 'yyyy-MM-dd') + 'T00:00:00.000Z';
     getAvailableSlots(eventTypeId, dateFrom, dateTo)
       .then((newSlots) => {
         setSlots(newSlots);
