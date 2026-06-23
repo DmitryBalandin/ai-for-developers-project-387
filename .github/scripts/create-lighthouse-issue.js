@@ -72,9 +72,31 @@ function getAuditItems(report, auditIds) {
 }
 
 async function main() {
-  const manifestPath = path.join('.lighthouseci', 'manifest.json');
+  const cwd = process.cwd();
+  console.log('CWD:', cwd);
+  try {
+    const entries = fs.readdirSync(cwd);
+    console.log('Root entries:', entries);
+  } catch (e) {
+    console.log('Failed to list root:', e);
+  }
+
+  const manifestPath = path.join(cwd, '.lighthouseci', 'manifest.json');
+  console.log('Looking for manifest at:', manifestPath);
+
   if (!fs.existsSync(manifestPath)) {
     console.log('No manifest.json found, skipping issue creation.');
+    try {
+      const lhDir = path.join(cwd, '.lighthouseci');
+      if (fs.existsSync(lhDir)) {
+        const files = fs.readdirSync(lhDir);
+        console.log('.lighthouseci files:', files);
+      } else {
+        console.log('.lighthouseci directory does not exist');
+      }
+    } catch (e) {
+      console.log('Failed to inspect .lighthouseci:', e);
+    }
     return;
   }
 
