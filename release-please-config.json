@@ -1,0 +1,12 @@
+{
+  "packages": {
+    "backend": {
+      "release-type": "node",
+      "package-name": "calendar-of-calls-backend"
+    },
+    "frontend": {
+      "release-type": "node",
+      "package-name": "frontend"
+    }
+  }
+}
